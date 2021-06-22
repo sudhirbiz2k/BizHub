@@ -5,8 +5,9 @@ const ProjectSchema=new mongoose.Schema({
     ProjectTitle:{type:String,unique:[true,"This Title is Already Taken"]},
     ProjectDesc:String,
     ProjectType:{type:String,enum:{values:['Group','Individual'],message:`{VALUE} is not supported`}},
-    ProjectAdmin:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}],
-    ProjectMembers:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}],
+    ProjectCreatedBy:{type:mongoose.Schema.Types.ObjectId,ref:'User'},
+    ProjectAdmin:{type:mongoose.Schema.Types.ObjectId,ref:'User'},
+    ProjectMembers:Array,
     Tasks:[{type:mongoose.Schema.Types.ObjectId,ref:'Task'}],
     DateCreated:{type:Date,default:Date.now}
 

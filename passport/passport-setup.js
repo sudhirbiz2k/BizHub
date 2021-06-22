@@ -1,6 +1,6 @@
 
 const GoogleStrat=require('passport-google-oauth20');
-const User=require('../models/UserModel');
+const User=require('../Models/UserModel');
 const GitStrat=require('passport-github')
 const session=require('express-session')
 const jwt=require('jsonwebtoken')
@@ -26,14 +26,14 @@ module.exports=function(app,passport){
     passport.use(new GoogleStrat({
       
         callbackURL:'/auth/google/redirect',
-        clientID:"",
-        clientSecret:"",
+        clientID:"188450418058-jv43c051c0qohpt0ngk3b0tmfrf8lse0.apps.googleusercontent.com",
+        clientSecret:"ET057gtXOPDh0sRB42FjGKU2",
     
     },(accessToken,refreshToken,profile,done)=>{ 
         
        
         ////check if user already exists///
-        User.findOne({googleid:profile.id})
+        User.findOne({google_id:profile.id})
         .then((currentUser)=>{
             if(currentUser){
                 console.log(currentUser)
@@ -41,11 +41,12 @@ module.exports=function(app,passport){
                 //already have the user
                 done(null,currentUser)
             }else{
+                console.log(profile)
                 new User({
-                    username:profile.displayName,
-                    googleid:profile.id,
-                    email:profile.emails[0].value,
-                    photo:profile.photos[0].value
+                    Username:profile.displayName,
+                    google_id:profile.id,
+                    Email:profile.emails[0].value,
+                    Photo:profile.photos[0].value
                 }).save().then((newuser)=>{
                  
                    
@@ -59,13 +60,13 @@ module.exports=function(app,passport){
     }))
 
     passport.use(new GitStrat({
-        clientID:"",
-        clientSecret:"",
+        clientID:"b04744bceaa900127a59",
+        clientSecret:"2a6aa7926e138ec87121d2ccf1326e00a4068e56",
         callbackURL:"http://localhost:8000/auth/github/redirect",
         
     },(accessToken,refreshToken,profile,done)=>{
         console.log(profile)
-        User.findOne({gitid:profile.id})
+        User.findOne({Email:profile._json.email})
         .then((currentUser)=>{
             if(currentUser){
                 //already have the user
@@ -73,10 +74,10 @@ module.exports=function(app,passport){
                 done(null,currentUser)
             }else{
                 new User({
-                    username:profile.username,
-                    gitid:profile.id,
-                    email:profile._json.email,
-                    photo:profile.photos[0].value
+                    Username:profile.username,
+                    git_id:profile.id,
+                    Email:profile._json.email,
+                    Photo:profile.photos[0].value
                 }).save().then((newuser)=>{
                 
                     done(null,newuser)
@@ -87,10 +88,10 @@ module.exports=function(app,passport){
     }))
     app.get('/auth/github',passport.authenticate('github',{scope:'user:email'}))
     app.get('/auth/github/redirect',passport.authenticate('github'),(req,res)=>{ 
-        res.redirect('http://localhost:8100/profile?from=social')
+        res.redirect('http://localhost:3000?from=social')
     })
     app.get('/auth/google/redirect',passport.authenticate('google'),(req,res)=>{
-        res.redirect('http://localhost:8100/profile?from=social')
+        res.redirect('http://localhost:3000?from='+'social')
     app.get('/auth/getSocialToken',(req,res)=>{
         res.json({success:true, token})
     })

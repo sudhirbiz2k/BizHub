@@ -1,7 +1,12 @@
 const router=require('express').Router()
 const TaskController=require('./../Controller/TaskController')
-
-router.post('/CreateTask',TaskController.CreateTask)
+const UserController=require('./../Controller/UserController')
+router.post('/CreateTask',UserController.protectroute,TaskController.CreateTask)
 router.get('/GetAllTasks',TaskController.GetTask)
-
+router.get('/GetTaskByProjectName',TaskController.GetTaskByProjectName)
+router.route('/UpdateTaskStatus/:id').patch(TaskController.UpdateTaskStatus)
+router.patch('/EditTask/:id').patch(TaskController.EditTask)
+router.post('/DeleteTask/:id',UserController.protectroute, TaskController.DeleteTask)
+router.post('/DoneTask/:id',UserController.protectroute,TaskController.DoneTask)
+router.get('/OverDue/:id',UserController.protectroute,TaskController.OverdueTask)
 module.exports =router
